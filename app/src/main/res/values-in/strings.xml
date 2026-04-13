@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">penghitung waktu main game</string>
+    <string name="game_intro">Cek apakah waktu bermain game kamu masih sehat atau sudah berlebihan!</string>
+    <string name="total_jam">Total jam main</string>
+    <string name="jumlah_sesi">Berapa sesi main</string>
+    <string name="hari_kerja">Senin - Jumat</string>
+    <string name="hari_libur">Sabtu dan Ahad</string>
+    <string name="ada_kuliah">Ada kuliah</string>
+    <string name="tidak_ada_kuliah">Tidak ada kuliah</string>
+    <string name="hitung">Cek Status</string>
+    <string name="reset">Reset</string>
+    <string name="status_over">Kelamaan mainnya</string>
+    <string name="status_oke">Aman azzah</string>
+    <string name="status_sesi_banyak">Kebanyakan tuh sesinya</string>
+    <string name="input_invalid">Input tidak valid.</string>
+    <string name="tentang_aplikasi">Tentang Aplikasi</string>
+    <string name="bagikan">Bagikan</string>
+    <string name="bagikan_template">Total Jam: %1$s jam\nSesi: %2$s kali\nHari: %3$s\nStatus Kuliah: %4$s\n\nStatus: %5$s</string>
+    <string name="copyright">Game Time Checker membantu menyeimbangkan hobi dan kewajiban.\n\nCreated by Adib.</string>
+    <string name="kembali">Kembali</string>
+    <string name="pilih_hari">Pilih Hari:</string>
+    <string name="status_kuliah">Status Kuliah:</string>
+    <string name="gambar_status">Gambar status: %1$s</string>
+</resources>

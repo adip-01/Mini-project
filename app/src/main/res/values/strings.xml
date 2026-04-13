@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Game Playtime Counter</string>
+    <string name="game_intro">Check if your gaming time is healthy or excessive!</string>
+    <string name="total_jam">Total hours played</string>
+    <string name="jumlah_sesi">Number of game sessions</string>
+    <string name="hari_kerja">Monday - Friday</string>
+    <string name="hari_libur">Saturday and Sunday</string>
+    <string name="ada_kuliah">Class today</string>
+    <string name="tidak_ada_kuliah">No class</string>
+    <string name="hitung">Check Status</string>
+    <string name="reset">Reset</string>
+    <string name="status_over">Playing for too long</string>
+    <string name="status_oke">Safe</string>
+    <string name="status_sesi_banyak">Too many sessions</string>
+    <string name="input_invalid">Invalid input.</string>
+    <string name="tentang_aplikasi">About the Application</string>
+    <string name="bagikan">Share</string>
+    <string name="bagikan_template">Total Hours: %1$s hours\nSessions: %2$s times\nDays: %3$s\nLecture Status: %4$s\n\nStatus: %5$s</string>
+    <string name="copyright">Game Time Checker helps balance hobbies and obligations.\n\nCreated by Adib.</string>
+    <string name="kembali">Back</string>
+    <string name="pilih_hari">Select Day:</string>
+    <string name="status_kuliah">Lecture Status:</string>
+    <string name="gambar_status">Status Image: %1$s</string>
+</resources>
