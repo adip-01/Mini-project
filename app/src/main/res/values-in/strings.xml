@@ -17,7 +17,7 @@
     <string name="tentang_aplikasi">Tentang Aplikasi</string>
     <string name="bagikan">Bagikan</string>
     <string name="bagikan_template">Total Jam: %1$s jam\nSesi: %2$s kali\nHari: %3$s\nStatus Kuliah: %4$s\n\nStatus: %5$s</string>
-    <string name="copyright">Ini adalah aplikasi untuk menghitung apa waktu yang saya gunakan untuk bermain game pakah aman atau tidak.\n\nDibuat oleh adip pepe.</string>
+    <string name="copyright">Ini adalah aplikasi untuk menghitung apa waktu yang saya gunakan untuk bermain game apakah aman atau tidak.\n\nDibuat oleh adip pepe.</string>
     <string name="kembali">Kembali</string>
     <string name="pilih_hari">Pilih Hari:</string>
     <string name="status_kuliah">Status Kuliah:</string>
