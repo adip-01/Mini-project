@@ -16,7 +16,7 @@
     <string name="tentang_aplikasi">About the Application</string>
     <string name="bagikan">Share</string>
     <string name="bagikan_template">Total Hours: %1$s hours\nSessions: %2$s times\nDays: %3$s\nLecture Status: %4$s\n\nStatus: %5$s</string>
-    <string name="copyright">Game Time Checker helps balance hobbies and obligations.\n\nCreated by Adib.</string>
+    <string name="copyright">This is an application to calculate whether the time I spend playing games is safe or not..\n\nCreated by adip pepe.</string>
     <string name="kembali">Back</string>
     <string name="pilih_hari">Select Day:</string>
     <string name="status_kuliah">Lecture Status:</string>
