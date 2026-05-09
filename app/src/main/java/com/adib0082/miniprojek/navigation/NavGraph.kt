@@ -9,6 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.adib0082.miniprojek.ui.screen.DetailScreen
 import com.adib0082.miniprojek.ui.screen.MainScreen
+import com.adib0082.miniprojek.ui.screen.ScreenHapus
 
 @Composable
 fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
@@ -30,6 +31,10 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
         ) { backStackEntry ->
             val id = backStackEntry.arguments?.getLong("id")
             DetailScreen(navController, id)
+        }
+
+        composable("recycleBin") {
+            ScreenHapus(navController)
         }
     }
 }

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.adib0082.miniprojek.model.Kategori
 import com.adib0082.miniprojek.model.SensorKecepatan
 
-@Database(entities = [SensorKecepatan::class, Kategori::class], version = 1, exportSchema = false)
+@Database(entities = [SensorKecepatan::class, Kategori::class], version = 2, exportSchema = false)
 abstract class KecepatanDb : RoomDatabase() {
     abstract val dao: KecepatanDao
 
