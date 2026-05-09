@@ -73,7 +73,7 @@ fun MainScreen(navController: NavHostController) {
             TopAppBar(
                 title = { Text("Nama Aplikasi", color = Color.White) },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF2196F3), // Biru yang sama
+                    containerColor = Color(0xFF2196F3),
                 ),
                 actions = {
                     IconButton(onClick = { navController.navigate("recycleBin") }) {
@@ -90,7 +90,7 @@ fun MainScreen(navController: NavHostController) {
                                 else R.drawable.baseline_grid_view_24
                             ),
                             contentDescription = "Ganti Layout",
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = Color.White
                         )
                     }
                 }
@@ -101,7 +101,7 @@ fun MainScreen(navController: NavHostController) {
                 onClick = {
                     navController.navigate(Screen.FormBaru.route)
                 },
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = Color(0xFF2196F3)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
