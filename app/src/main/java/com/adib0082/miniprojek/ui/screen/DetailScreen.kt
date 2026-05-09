@@ -47,6 +47,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.adib0082.miniprojek.util.ViewModelFactory
+import android.widget.Toast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -89,16 +90,27 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF2196F3), // BIRU
                 ),
-                actions = {
-                    IconButton(onClick = {
-                        // ... (logic simpan tetap sama)
-                    }) {
-                        Icon(
-                            imageVector = Icons.Outlined.Check,
-                            contentDescription = "Simpan",
-                            tint = Color.White // IKON CEKLIS PUTIH
-                        )
+                actions = {IconButton(onClick = {
+                    // Validasi: Cek apakah ada data yang kosong
+                    if (nilai.isBlank() || jenis.isBlank() || lokasi.isBlank()) {
+                        Toast.makeText(context, "Semua data harus diisi!", Toast.LENGTH_LONG).show()
+                        return@IconButton
                     }
+
+                    val nilaiDouble = nilai.toDoubleOrNull() ?: 0.0
+                    if (id == null) {
+                        viewModel.insert(nilaiDouble, jenis, lokasi)
+                    } else {
+                        viewModel.update(id, nilaiDouble, jenis, lokasi)
+                    }
+                    navController.popBackStack()
+                }) {
+                    Icon(
+                        imageVector = Icons.Outlined.Check,
+                        contentDescription = "Simpan",
+                        tint = Color.White
+                    )
+                }
                     if (id != null) {
                         DeleteAction { showDialog = true }
                     }
