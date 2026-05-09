@@ -4,20 +4,21 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.adib0082.miniprojek.model.KecepatanSensor
+import com.adib0082.miniprojek.model.SensorKecepatan
 
-@Database(entities = [KecepatanSensor::class], version = 1, exportSchema = false)
-abstract class AppDb : RoomDatabase() {
+@Database(entities = [SensorKecepatan::class], version = 1, exportSchema = false)
+abstract class KecepatanDb : RoomDatabase() {
     abstract val dao: KecepatanDao
 
     companion object {
         @Volatile
-        private var INSTANCE: AppDb? = null
-        fun getInstance(context: Context): AppDb {
+        private var INSTANCE: KecepatanDb? = null
+
+        fun getInstance(context: Context): KecepatanDb {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
-                    AppDb::class.java,
+                    KecepatanDb::class.java,
                     "sensor_db"
                 ).build()
                 INSTANCE = instance
