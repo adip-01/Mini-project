@@ -1,67 +1,65 @@
-package com.adib0082.miniprojek.ui.screen
+package com.adib0082.mobpro1.ui.screen
 
-import android.content.Context
-import android.content.Intent
 import android.content.res.Configuration
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.outlined.Info
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.adib0082.miniprojek.R
-import com.adib0082.miniprojek.navigation.Screen
+import com.adib0082.mobpro1.R
+import com.adib0082.mobpro1.model.Mahasiswa
+import com.adib0082.mobpro1.navigation.Screen
+import com.adib0082.mobpro1.util.SettingsDataStore
+import com.adib0082.mobpro1.util.ViewModelFactory
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: NavController) {
-    Scaffold (
+fun MainScreen(navController: NavHostController) {
+    val dataStore = SettingsDataStore(LocalContext.current)
+    val showList by dataStore.layoutFlow.collectAsState(true)
+
+    Scaffold(
         topBar = {
             TopAppBar(
                 title = {
@@ -73,272 +71,151 @@ fun MainScreen(navController: NavController) {
                 ),
                 actions = {
                     IconButton(onClick = {
-                        navController.navigate(Screen.About.route)
-                    })  {
+                        CoroutineScope(Dispatchers.IO).launch{
+                            dataStore.saveLayout(!showList)
+                        }
+                    }) {
                         Icon(
-                            imageVector = Icons.Outlined.Info,
-                            contentDescription = stringResource(id = R.string.tentang_aplikasi),
+                            painter = painterResource(
+                                if (showList) R.drawable.baseline_view_list_24
+                                else R.drawable.baseline_grid_view_24
+                            ),
+                            contentDescription = stringResource(
+                                if (showList) R.string.grid
+                                else R.string.list
+                            ),
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate(Screen.FromBaru.route)
+                }
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = stringResource(id = R.string.tambah_mahasiswa),
+                    tint = MaterialTheme.colorScheme.onPrimary
+                )
+            }
         }
     ) { innerPadding ->
-        ScreenContent(Modifier.padding(innerPadding))
+        ScreenContent(showList, Modifier.padding(innerPadding), navController)
     }
 }
 
 @Composable
-fun ScreenContent(modifier: Modifier = Modifier) {
-    var totalJam by rememberSaveable { mutableStateOf("") }
-    var totalJamError by rememberSaveable { mutableStateOf(false) }
-    var jumlahSesi by rememberSaveable { mutableStateOf("") }
-    var jumlahSesiError by rememberSaveable { mutableStateOf(false) }
-    val hariOptions = listOf(
-        stringResource(id = R.string.hari_kerja),
-        stringResource(id = R.string.hari_libur)
-    )
-    var selectedHari by rememberSaveable { mutableStateOf(hariOptions[0]) }
-    val kuliahOptions = listOf(
-        stringResource(id = R.string.ada_kuliah),
-        stringResource(id = R.string.tidak_ada_kuliah)
-    )
-    var selectedKuliah by rememberSaveable { mutableStateOf(kuliahOptions[0]) }
-    var statusResId by rememberSaveable { mutableIntStateOf(0) }
+fun ScreenContent(showList: Boolean, modifier: Modifier = Modifier, navController: NavHostController) {
     val context = LocalContext.current
+    val factory = ViewModelFactory(context)
+    val viewModel: MainViewModel = viewModel(factory = factory)
+    val data by viewModel.data.collectAsState()
 
-    Column (
-        modifier = modifier.fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
+    if (data.isEmpty()) {
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(text = stringResource(id = R.string.list_kosong))
+        }
+    } else {
+        if (showList) {
+            LazyColumn(
+                modifier = modifier.fillMaxSize(),
+                contentPadding = PaddingValues(bottom = 84.dp)
+            ) {
+                items(data) {
+                    ListItem(it) {
+                        navController.navigate(Screen.FormUbah.withId(it.id))
+                    }
+                    HorizontalDivider()
+                }
+            }
+        }
+        else {
+            LazyVerticalStaggeredGrid(
+                modifier = modifier.fillMaxSize(),
+                columns = StaggeredGridCells.Fixed(2),
+                verticalItemSpacing = 8.dp,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 84.dp)
+
+            ) {
+                items(data) {
+                    GridItem(it) {
+                        navController.navigate(Screen.FormUbah.withId(it.id))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ListItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = stringResource(R.string.game_intro),
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier.fillMaxWidth()
+            text = mahasiswa.nama,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            fontWeight = FontWeight.Bold
         )
 
-        // Input Total Jam
-        OutlinedTextField(
-            value = totalJam,
-            onValueChange = { totalJam = it },
-            label = { Text(text = stringResource(R.string.total_jam)) },
-            trailingIcon = { IconPicker(totalJamError, "jam") },
-            supportingText = { ErrorHint(totalJamError) },
-            isError = totalJamError,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Next
-            ),
-            modifier = Modifier.fillMaxWidth()
+        Text(
+            text = mahasiswa.nim,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis
         )
+        Text(text = mahasiswa.kelas)
+    }
+}
 
-        OutlinedTextField(
-            value = jumlahSesi,
-            onValueChange = { jumlahSesi = it },
-            label = { Text(text = stringResource(R.string.jumlah_sesi)) },
-            trailingIcon = { IconPicker(jumlahSesiError, "kali") },
-            supportingText = { ErrorHint(jumlahSesiError) },
-            isError = jumlahSesiError,
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
-                imeAction = ImeAction.Done
-            ),
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Text(text = stringResource(R.string.pilih_hari), style = MaterialTheme.typography.labelLarge, modifier = Modifier.align(Alignment.Start))
-        Row(
-            modifier = Modifier.fillMaxWidth().border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
+@Composable
+fun GridItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
+    Card(
+        modifier = Modifier.fillMaxWidth().clickable { onClick() },
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface,
+        ),
+        border = BorderStroke(1.dp, DividerDefaults.color)
+    ) {
+        Column(
+            modifier = Modifier.padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            hariOptions.forEach { text ->
-                SelectableOption(
-                    label = text,
-                    isSelected = selectedHari == text,
-                    modifier = Modifier
-                        .selectable(
-                            selected = selectedHari == text,
-                            onClick = { selectedHari = text },
-                            role = Role.RadioButton
-                        )
-                        .weight(1f)
-                        .padding(12.dp)
-                )
-            }
-        }
-
-        Text(text = stringResource(R.string.status_kuliah), style = MaterialTheme.typography.labelLarge, modifier = Modifier.align(Alignment.Start))
-        Row(
-            modifier = Modifier.fillMaxWidth().border(1.dp, Color.Gray, RoundedCornerShape(4.dp))
-        ) {
-            kuliahOptions.forEach { text ->
-                SelectableOption(
-                    label = text,
-                    isSelected = selectedKuliah == text,
-                    modifier = Modifier
-                        .selectable(
-                            selected = selectedKuliah == text,
-                            onClick = { selectedKuliah = text },
-                            role = Role.RadioButton
-                        )
-                        .weight(1f)
-                        .padding(12.dp)
-                )
-            }
-        }
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Button(
-                onClick = {
-                    totalJamError = (totalJam == "" || totalJam.toFloatOrNull() == null)
-                    jumlahSesiError = (jumlahSesi == "" || jumlahSesi.toIntOrNull() == null)
-                    if (totalJamError || jumlahSesiError) return@Button
-
-                    statusResId = checkStatus(
-                        jam = totalJam.toFloat(),
-                        sesi = jumlahSesi.toInt(),
-                        isWeekend = selectedHari == hariOptions[1],
-                        hasCollege = selectedKuliah == kuliahOptions[0]
-                    )
-                },
-                modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(vertical = 16.dp)
-            ) {
-                Text(text = stringResource(R.string.hitung))
-            }
-
-            OutlinedButton(
-                onClick = {
-                    totalJam = ""
-                    jumlahSesi = ""
-                    totalJamError = false
-                    jumlahSesiError = false
-                    selectedHari = hariOptions[0]
-                    selectedKuliah = kuliahOptions[0]
-                    statusResId = 0
-                },
-                modifier = Modifier.weight(1f),
-                contentPadding = PaddingValues(vertical = 16.dp)
-            ) {
-                Text(text = stringResource(R.string.reset))
-            }
-        }
-
-        if (statusResId != 0) {
-            val statusText = stringResource(statusResId)
-            val imageRes =
-                if (statusResId == R.string.status_oke) {
-                    R.drawable.download
-                } else {
-                    R.drawable.download1
-                }
-            val message = stringResource(
-                R.string.bagikan_template,
-                totalJam,
-                jumlahSesi,
-                selectedHari,
-                selectedKuliah,
-                statusText
-            )
-
-            HorizontalDivider(
-                modifier = Modifier.padding(vertical = 8.dp),
-                thickness = 1.dp,
-            )
-            
             Text(
-                text = statusText,
-                style = MaterialTheme.typography.displayMedium,
-                color = if (statusResId == R.string.status_over || statusResId == R.string.status_sesi_banyak) MaterialTheme.colorScheme.error else Color(0xFF4CAF50),
+                text = mahasiswa.nama,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold
             )
-
-            Image(
-                painter = painterResource(id = imageRes),
-                contentDescription = stringResource(R.string.gambar_status, statusText),
-                contentScale = ContentScale.Fit,
-                modifier = Modifier.size(200.dp)
+            Text(
+                text = mahasiswa.nim,
+                maxLines = 4,
+                overflow = TextOverflow.Ellipsis
             )
-
-            Button(
-                onClick = { shareData(context, message) },
-                modifier = Modifier.padding(top = 8.dp),
-                contentPadding = PaddingValues(horizontal = 32.dp, vertical = 16.dp)
-            ) {
-                Text(text = stringResource(R.string.bagikan))
-            }
+            Text(text = mahasiswa.kelas)
         }
     }
 }
 
-@Composable
-fun SelectableOption(label: String, isSelected: Boolean, modifier: Modifier) {
-    Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        RadioButton(selected = isSelected, onClick = null)
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(start = 8.dp)
-        )
-    }
-}
-
-private fun checkStatus(jam: Float, sesi: Int, isWeekend: Boolean, hasCollege: Boolean): Int {
-    if (hasCollege) {
-        if (!isWeekend && sesi > 3) return R.string.status_sesi_banyak
-        if (isWeekend && sesi >= 6) return R.string.status_sesi_banyak
-    }
-    
-    val limit = when {
-        isWeekend && hasCollege -> 6f
-        isWeekend && !hasCollege -> 8f
-        !isWeekend && hasCollege -> 4f
-        else -> 6f
-    }
-
-    return if (jam > limit) R.string.status_over else R.string.status_oke
-}
-
-private fun shareData(context: Context, message: String) {
-    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-        type = "text/plain"
-        putExtra(Intent.EXTRA_TEXT, message)
-    }
-    if (shareIntent.resolveActivity(context.packageManager) != null) {
-        context.startActivity(shareIntent)
-    }
-}
-
-@Composable
-fun IconPicker(isError: Boolean, unit: String) {
-    if (isError) {
-        Icon(imageVector = Icons.Filled.Warning, contentDescription = null)
-    } else {
-        Text(text = unit)
-    }
-}
-
-@Composable
-fun ErrorHint(isError: Boolean){
-    if (isError) {
-        Text(text = stringResource(R.string.input_invalid))
-    }
-}
 
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)
 @Composable
-fun ScreenPreview() {
+fun MainScreenPreview() {
     MainScreen(rememberNavController())
 }
