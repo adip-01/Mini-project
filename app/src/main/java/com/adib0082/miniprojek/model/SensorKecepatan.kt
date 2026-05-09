@@ -10,5 +10,7 @@ data class SensorKecepatan(
     val nilai: Double,
     val jenis: String,
     val lokasi: String,
-    val waktu: Long = System.currentTimeMillis()
+    val waktu: Long = System.currentTimeMillis(),
+    val isDeleted: Boolean = false, // Fitur Recycle Bin
+    val kategoriId: Long = 0L       // Fitur Multi-table
 )

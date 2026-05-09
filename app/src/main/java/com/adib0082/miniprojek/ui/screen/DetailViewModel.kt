@@ -3,17 +3,22 @@ package com.adib0082.miniprojek.ui.screen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.adib0082.miniprojek.database.KecepatanDao
+import com.adib0082.miniprojek.model.Kategori
 import com.adib0082.miniprojek.model.SensorKecepatan
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class DetailViewModel(private val dao: KecepatanDao) : ViewModel() {
     
-    fun insert(nilai: Double, jenis: String, lokasi: String) {
+    val kategoriList: Flow<List<Kategori>> = dao.getAllKategori()
+
+    fun insert(nilai: Double, jenis: String, lokasi: String, kategoriId: Long = 0) {
         val data = SensorKecepatan(
             nilai = nilai,
             jenis = jenis,
-            lokasi = lokasi
+            lokasi = lokasi,
+            kategoriId = kategoriId
         )
         viewModelScope.launch(Dispatchers.IO) {
             dao.insert(data)
@@ -24,12 +29,13 @@ class DetailViewModel(private val dao: KecepatanDao) : ViewModel() {
         return dao.getDataById(id)
     }
 
-    fun update(id: Long, nilai: Double, jenis: String, lokasi: String) {
+    fun update(id: Long, nilai: Double, jenis: String, lokasi: String, kategoriId: Long = 0) {
         val data = SensorKecepatan(
             id = id,
             nilai = nilai,
             jenis = jenis,
-            lokasi = lokasi
+            lokasi = lokasi,
+            kategoriId = kategoriId
         )
         viewModelScope.launch(Dispatchers.IO) {
             dao.update(data)
@@ -38,7 +44,7 @@ class DetailViewModel(private val dao: KecepatanDao) : ViewModel() {
 
     fun delete(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            dao.deleteById(id)
+            dao.softDelete(id) // Menggunakan soft delete untuk Recycle Bin
         }
     }
 }

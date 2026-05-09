@@ -23,7 +23,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
         composable(route = Screen.FormBaru.route) {
             DetailScreen(navController)
         }
-        // Tambahkan rute untuk form ubah data dengan parameter ID
+
         composable(
             route = Screen.FormUbah.route,
             arguments = listOf(navArgument("id") { type = NavType.LongType })
