@@ -2,9 +2,12 @@ package com.adib0082.miniprojek.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.adib0082.miniprojek.ui.screen.DetailScreen
 import com.adib0082.miniprojek.ui.screen.MainScreen
 
 @Composable
@@ -15,6 +18,18 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
     ) {
         composable(route = Screen.Home.route) {
             MainScreen(navController)
+        }
+        // Tambahkan rute untuk form tambah data baru
+        composable(route = Screen.FormBaru.route) {
+            DetailScreen(navController)
+        }
+        // Tambahkan rute untuk form ubah data dengan parameter ID
+        composable(
+            route = Screen.FormUbah.route,
+            arguments = listOf(navArgument("id") { type = NavType.LongType })
+        ) { backStackEntry ->
+            val id = backStackEntry.arguments?.getLong("id")
+            DetailScreen(navController, id)
         }
     }
 }

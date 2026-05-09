@@ -32,8 +32,10 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -54,7 +56,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -160,6 +161,9 @@ fun ScreenContent(showList: Boolean, modifier: Modifier = Modifier, navControlle
 
 @Composable
 fun ListItem(data: SensorKecepatan, onClick: () -> Unit) {
+    val locale = LocalConfiguration.current.locales[0]
+    val formatter = remember(locale) { SimpleDateFormat("dd/MM/yyyy HH:mm", locale) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -179,7 +183,7 @@ fun ListItem(data: SensorKecepatan, onClick: () -> Unit) {
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-        Text(text = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date(data.waktu)))
+        Text(text = formatter.format(Date(data.waktu)))
     }
 }
 
