@@ -1,6 +1,7 @@
 package com.adib0082.miniprojek.ui.screen
 
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -37,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -46,8 +48,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.adib0082.miniprojek.R
 import com.adib0082.miniprojek.util.ViewModelFactory
-import android.widget.Toast
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -76,24 +78,23 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali",
-                            tint = Color.White // DIUBAH MENJADI PUTIH
+                            contentDescription = stringResource(R.string.back_desc),
+                            tint = Color.White
                         )
                     }
                 },
                 title = {
                     Text(
-                        text = if (id == null) "Tambah Data Sensor" else "Edit Data Sensor",
-                        color = Color.White // TEKS JUDUL PUTIH
+                        text = if (id == null) stringResource(R.string.title_add_sensor) else stringResource(R.string.title_edit_sensor),
+                        color = Color.White
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF2196F3), // BIRU
+                    containerColor = Color(0xFF2196F3),
                 ),
                 actions = {IconButton(onClick = {
-                    // Validasi: Cek apakah ada data yang kosong
                     if (nilai.isBlank() || jenis.isBlank() || lokasi.isBlank()) {
-                        Toast.makeText(context, "Semua data harus diisi!", Toast.LENGTH_LONG).show()
+                        Toast.makeText(context, context.getString(R.string.error_empty_fields), Toast.LENGTH_LONG).show()
                         return@IconButton
                     }
 
@@ -107,7 +108,7 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                 }) {
                     Icon(
                         imageVector = Icons.Outlined.Check,
-                        contentDescription = "Simpan",
+                        contentDescription = stringResource(R.string.save_desc),
                         tint = Color.White
                     )
                 }
@@ -146,7 +147,10 @@ fun FormSensor(
     lokasi: String, onLokasiChange: (String) -> Unit,
     modifier: Modifier
 ) {
-    val radioOptions = listOf("Angin", "Air")
+    val options = listOf(
+        stringResource(R.string.sensor_type_wind),
+        stringResource(R.string.sensor_type_water)
+    )
 
     Column(
         modifier = modifier
@@ -157,7 +161,7 @@ fun FormSensor(
         OutlinedTextField(
             value = nilai,
             onValueChange = { onNilaiChange(it) },
-            label = { Text(text = "Kecepatan") },
+            label = { Text(text = stringResource(R.string.label_speed)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Number,
@@ -168,7 +172,7 @@ fun FormSensor(
         OutlinedTextField(
             value = lokasi,
             onValueChange = { onLokasiChange(it) },
-            label = { Text(text = "Lokasi") },
+            label = { Text(text = stringResource(R.string.label_location)) },
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Words,
                 imeAction = ImeAction.Done
@@ -176,7 +180,7 @@ fun FormSensor(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Text(text = "Jenis Sensor", style = MaterialTheme.typography.titleMedium)
+        Text(text = stringResource(R.string.label_sensor_type), style = MaterialTheme.typography.titleMedium)
         OutlinedCard(
             modifier = Modifier.fillMaxWidth(),
             border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
@@ -184,7 +188,7 @@ fun FormSensor(
             Column(
                 modifier = Modifier.padding(8.dp)
             ) {
-                radioOptions.forEach { text ->
+                options.forEach { text ->
                     Row(
                         Modifier
                             .fillMaxWidth()
@@ -218,7 +222,7 @@ fun DeleteAction(delete: () -> Unit) {
     IconButton(onClick = { expanded = true }) {
         Icon(
             imageVector = Icons.Filled.MoreVert,
-            contentDescription = "Lainnya",
+            contentDescription = stringResource(R.string.more_desc),
             tint = Color.White
         )
         DropdownMenu(
@@ -227,7 +231,7 @@ fun DeleteAction(delete: () -> Unit) {
         ) {
             DropdownMenuItem(
                 text = {
-                    Text(text = "Hapus")
+                    Text(text = stringResource(R.string.delete_text))
                 },
                 onClick = {
                     expanded = false

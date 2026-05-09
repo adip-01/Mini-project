@@ -5,7 +5,9 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.adib0082.miniprojek.R
 
 @Composable
 fun DisplayAlertDialog(
@@ -13,15 +15,15 @@ fun DisplayAlertDialog(
     onConfirmation: () -> Unit
 ) {
     AlertDialog(
-        text = { Text(text = "Apakah Anda yakin ingin menghapus data ini?")},
+        text = { Text(text = stringResource(R.string.delete_confirmation_msg))},
         confirmButton = {
             TextButton(onClick = { onConfirmation()}) {
-                Text(text = "Hapus")
+                Text(text = stringResource(R.string.delete_button))
             }
         },
         dismissButton = {
             TextButton(onClick = { onDismissRequest()}) {
-                Text(text = "Batal")
+                Text(text = stringResource(R.string.cancel_button))
             }
         },
         onDismissRequest = { onDismissRequest()}

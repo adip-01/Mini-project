@@ -23,8 +23,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import com.adib0082.miniprojek.R
 import com.adib0082.miniprojek.util.ViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,36 +39,36 @@ fun ScreenHapus(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Keranjang Sampah") },
+                title = { Text(stringResource(R.string.title_recycle_bin)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Kembali",
-                            tint = Color.White // Ikon panah jadi putih
+                            contentDescription = stringResource(R.string.back_desc),
+                            tint = Color.White
                         )
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF2196F3), // Warna Biru
-                    titleContentColor = Color.White      // Tulisan jadi Putih
+                    containerColor = Color(0xFF2196F3),
+                    titleContentColor = Color.White
                 )
             )
         }
     ) { padding ->
         if (deletedData.isEmpty()) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                Text("Tidak ada data terhapus")
+                Text(stringResource(R.string.empty_recycle_bin))
             }
         } else {
             LazyColumn(modifier = Modifier.padding(padding)) {
                 items(deletedData) { data ->
                     ListItem(
-                        headlineContent = { Text("${data.nilai} m/s") },
+                        headlineContent = { Text(stringResource(R.string.unit_ms, data.nilai)) },
                         supportingContent = { Text(data.lokasi) },
                         trailingContent = {
                             IconButton(onClick = { viewModel.restore(data.id) }) {
-                                Icon(Icons.Default.Restore, "Undo", tint = Color(0xFF2196F3))
+                                Icon(Icons.Default.Restore, stringResource(R.string.restore_desc), tint = Color(0xFF2196F3))
                             }
                         }
                     )

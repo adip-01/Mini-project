@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -71,13 +72,13 @@ fun MainScreen(navController: NavHostController) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Nama Aplikasi", color = Color.White) },
+                title = { Text(stringResource(R.string.app_name), color = Color.White) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = Color(0xFF2196F3),
                 ),
                 actions = {
                     IconButton(onClick = { navController.navigate("recycleBin") }) {
-                        Icon(Icons.Default.DeleteSweep, "Sampah", tint = Color.White)
+                        Icon(Icons.Default.DeleteSweep, stringResource(R.string.recycle_bin_desc), tint = Color.White)
                     }
                     IconButton(onClick = {
                         scope.launch {
@@ -89,7 +90,7 @@ fun MainScreen(navController: NavHostController) {
                                 if (showList) R.drawable.baseline_view_list_24
                                 else R.drawable.baseline_grid_view_24
                             ),
-                            contentDescription = "Ganti Layout",
+                            contentDescription = stringResource(R.string.change_layout_desc),
                             tint = Color.White
                         )
                     }
@@ -105,7 +106,7 @@ fun MainScreen(navController: NavHostController) {
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "Tambah Data",
+                    contentDescription = stringResource(R.string.add_data_desc),
                     tint = Color.White
                 )
             }
@@ -134,7 +135,7 @@ fun ScreenContent(showList: Boolean, modifier: Modifier = Modifier, navControlle
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Daftar Kosong")
+            Text(text = stringResource(R.string.empty_list_text))
         }
     } else {
         if (showList) {
@@ -210,11 +211,11 @@ fun ListItem(data: SensorKecepatan, onClick: () -> Unit, onDelete: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
-                text = "${data.nilai} m/s",
+                text = stringResource(R.string.unit_ms, data.nilai),
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "Jenis: ${data.jenis} | Lokasi: ${data.lokasi}",
+                text = stringResource(R.string.item_subtitle_format, data.jenis, data.lokasi),
                 style = MaterialTheme.typography.bodySmall
             )
             Text(text = formatter.format(Date(data.waktu)), style = MaterialTheme.typography.labelSmall)
@@ -222,7 +223,7 @@ fun ListItem(data: SensorKecepatan, onClick: () -> Unit, onDelete: () -> Unit) {
         IconButton(onClick = onDelete) {
             Icon(
                 imageVector = Icons.Default.Delete,
-                contentDescription = "Delete",
+                contentDescription = stringResource(R.string.delete_desc),
                 tint = Color.Gray
             )
         }
@@ -244,25 +245,25 @@ fun GridItem(data: SensorKecepatan, onClick: () -> Unit, onDelete: () -> Unit) {
         ) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text(
-                    text = "${data.nilai} m/s",
+                    text = stringResource(R.string.unit_ms, data.nilai),
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.weight(1f)
                 )
                 IconButton(onClick = onDelete, modifier = Modifier.size(24.dp)) {
                     Icon(
                         imageVector = Icons.Default.Delete,
-                        contentDescription = "Delete",
+                        contentDescription = stringResource(R.string.delete_desc),
                         tint = Color.Gray,
                         modifier = Modifier.size(16.dp)
                     )
                 }
             }
             Text(
-                text = "Jenis: ${data.jenis}",
+                text = stringResource(R.string.item_type_format, data.jenis),
                 style = MaterialTheme.typography.bodySmall
             )
             Text(
-                text = "Lokasi: ${data.lokasi}",
+                text = stringResource(R.string.item_location_format, data.lokasi),
                 style = MaterialTheme.typography.bodySmall
             )
         }
