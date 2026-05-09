@@ -1,4 +1,4 @@
-package com.adib0082.mobpro1.ui.screen
+package com.adib0082.miniprojek.ui.screen
 
 import android.content.res.Configuration
 import android.widget.Toast
@@ -37,18 +37,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.adib0082.mobpro1.R
-import com.adib0082.mobpro1.util.ViewModelFactory
-
+import com.adib0082.miniprojek.util.ViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,19 +55,17 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
     val factory = ViewModelFactory(context)
     val viewModel: DetailViewModel = viewModel(factory = factory)
 
-    var nama by remember { mutableStateOf("") }
-    var nim by remember { mutableStateOf("") }
-    var kelas by remember { mutableStateOf("") }
+    var nilai by remember { mutableStateOf("") }
+    var jenis by remember { mutableStateOf("") }
+    var lokasi by remember { mutableStateOf("") }
     var showDialog by remember { mutableStateOf(false) }
-
-    // 1. Tambahkan state kelas
 
     LaunchedEffect(Unit) {
         if (id == null) return@LaunchedEffect
-        val data = viewModel.getMahasiswa(id) ?: return@LaunchedEffect
-        nama = data.nama
-        nim = data.nim
-        kelas = data.kelas
+        val data = viewModel.getData(id) ?: return@LaunchedEffect
+        nilai = data.nilai.toString()
+        jenis = data.jenis
+        lokasi = data.lokasi
     }
 
     Scaffold(
@@ -79,16 +75,16 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(id = R.string.kembali),
+                            contentDescription = "Kembali",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
                 title = {
                     if (id == null)
-                        Text(text = stringResource(id = R.string.tambah_mahasiswa))
+                        Text(text = "Tambah Data Sensor")
                     else
-                        Text(text = stringResource(id = R.string.edit_mahasiswa))
+                        Text(text = "Edit Data Sensor")
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -96,21 +92,22 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                 ),
                 actions = {
                     IconButton(onClick = {
-                        if (nama == "" || nim == "") {
-                            Toast.makeText(context, R.string.invalid, Toast.LENGTH_LONG).show()
+                        if (nilai == "" || jenis == "" || lokasi == "") {
+                            Toast.makeText(context, "Data tidak boleh kosong!", Toast.LENGTH_LONG).show()
                             return@IconButton
                         }
 
+                        val nilaiDouble = nilai.toDoubleOrNull() ?: 0.0
                         if (id == null) {
-                            viewModel.insert(nama, nim, kelas)
+                            viewModel.insert(nilaiDouble, jenis, lokasi)
                         } else {
-                            viewModel.update(id, nama, nim, kelas)
+                            viewModel.update(id, nilaiDouble, jenis, lokasi)
                         }
                         navController.popBackStack()
                     }) {
                         Icon(
                             imageVector = Icons.Outlined.Check,
-                            contentDescription = stringResource(id = R.string.kembali),
+                            contentDescription = "Simpan",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -123,13 +120,13 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
             )
         }
     ) { padding ->
-        FormMahasiswa(
-            nama = nama,
-            onNamaChange = { nama = it },
-            nim = nim,
-            onNimChange = { nim = it },
-            kelas = kelas,
-            onKelasChange = { kelas = it },
+        FormSensor(
+            nilai = nilai,
+            onNilaiChange = { nilai = it },
+            jenis = jenis,
+            onJenisChange = { jenis = it },
+            lokasi = lokasi,
+            onLokasiChange = { lokasi = it },
             modifier = Modifier.padding(padding)
         )
 
@@ -145,60 +142,62 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
 }
 
 @Composable
-fun FormMahasiswa(
-    nama: String, onNamaChange: (String) -> Unit,
-    nim: String, onNimChange: (String) -> Unit,
-    kelas: String, onKelasChange: (String) -> Unit,
+fun FormSensor(
+    nilai: String, onNilaiChange: (String) -> Unit,
+    jenis: String, onJenisChange: (String) -> Unit,
+    lokasi: String, onLokasiChange: (String) -> Unit,
     modifier: Modifier
 ) {
-    val radioOptions = listOf("D3IF-46-01", "D3IF-46-02", "D3IF-46-03", "D3IF-46-04", "D3IF-46-05")
+    val radioOptions = listOf("Angin", "Air")
 
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         OutlinedTextField(
-            value = nama,
-            onValueChange = { onNamaChange(it) },
-            label = { Text(text = stringResource(id = R.string.nama)) },
+            value = nilai,
+            onValueChange = { onNilaiChange(it) },
+            label = { Text(text = "Kecepatan") },
             singleLine = true,
-            keyboardOptions = KeyboardOptions (
-                capitalization = KeyboardCapitalization.Words,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number,
                 imeAction = ImeAction.Next
             ),
             modifier = Modifier.fillMaxWidth()
         )
         OutlinedTextField(
-            value = nim,
-            onValueChange = { onNimChange(it) },
-            label = { Text(text = stringResource(id = R.string.nim)) },
+            value = lokasi,
+            onValueChange = { onLokasiChange(it) },
+            label = { Text(text = "Lokasi") },
             keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences
+                capitalization = KeyboardCapitalization.Words,
+                imeAction = ImeAction.Done
             ),
             modifier = Modifier.fillMaxWidth()
         )
 
+        Text(text = "Jenis Sensor", style = MaterialTheme.typography.titleMedium)
         OutlinedCard(
             modifier = Modifier.fillMaxWidth(),
-            border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline)
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
         ) {
             Column(
-                modifier = Modifier.padding(16.dp)
+                modifier = Modifier.padding(8.dp)
             ) {
                 radioOptions.forEach { text ->
                     Row(
                         Modifier
                             .fillMaxWidth()
                             .selectable(
-                                selected = (text == kelas),
-                                onClick = { onKelasChange(text) },
+                                selected = (text == jenis),
+                                onClick = { onJenisChange(text) },
                                 role = Role.RadioButton
                             )
                             .padding(vertical = 4.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ){
                         RadioButton(
-                            selected = (text == kelas),
+                            selected = (text == jenis),
                             onClick = null
                         )
                         Text(
@@ -219,7 +218,7 @@ fun DeleteAction(delete: () -> Unit) {
     IconButton(onClick = {expanded = true}) {
         Icon(
             imageVector = Icons.Filled.MoreVert,
-            contentDescription = stringResource(id = R.string.lainnya),
+            contentDescription = "Lainnya",
             tint = MaterialTheme.colorScheme.primary
         )
         DropdownMenu(
@@ -228,7 +227,7 @@ fun DeleteAction(delete: () -> Unit) {
         ) {
             DropdownMenuItem(
                 text = {
-                    Text(text = stringResource(id = R.string.hapus))
+                    Text(text = "Hapus")
                 },
                 onClick = {
                     expanded = false
@@ -239,7 +238,6 @@ fun DeleteAction(delete: () -> Unit) {
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)

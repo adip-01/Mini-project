@@ -1,43 +1,44 @@
-package com.adib0082.mobpro1.ui.screen
+package com.adib0082.miniprojek.ui.screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.adib0082.mobpro1.database.MahasiswaDao
-import com.adib0082.mobpro1.model.Mahasiswa
+import com.adib0082.miniprojek.database.KecepatanDao
+import com.adib0082.miniprojek.model.SensorKecepatan
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DetailViewModel(private val dao: MahasiswaDao) : ViewModel() {
-    fun insert(nama: String, nim: String, kelas: String) {
-        val mahasiswa = Mahasiswa(
-            nama = nama,
-            nim = nim,
-            kelas = kelas
+class DetailViewModel(private val dao: KecepatanDao) : ViewModel() {
+    
+    fun insert(nilai: Double, jenis: String, lokasi: String) {
+        val data = SensorKecepatan(
+            nilai = nilai,
+            jenis = jenis,
+            lokasi = lokasi
         )
         viewModelScope.launch(Dispatchers.IO) {
-            dao.insert(mahasiswa)
+            dao.insert(data)
         }
     }
-    suspend fun getMahasiswa(id: Long): Mahasiswa? {
-        return dao.getMahasiswaById(id)
+
+    suspend fun getData(id: Long): SensorKecepatan? {
+        return dao.getDataById(id)
     }
 
-    fun update(id: Long, nama: String, nim: String, kelas: String) {
-        val mahasiswa = Mahasiswa(
+    fun update(id: Long, nilai: Double, jenis: String, lokasi: String) {
+        val data = SensorKecepatan(
             id = id,
-            nama = nama,
-            nim = nim,
-            kelas = kelas
+            nilai = nilai,
+            jenis = jenis,
+            lokasi = lokasi
         )
         viewModelScope.launch(Dispatchers.IO) {
-            dao.update(mahasiswa)
+            dao.update(data)
         }
     }
 
     fun delete(id: Long) {
         viewModelScope.launch(Dispatchers.IO) {
-            dao.delete(id)
+            dao.deleteById(id)
         }
     }
-
 }

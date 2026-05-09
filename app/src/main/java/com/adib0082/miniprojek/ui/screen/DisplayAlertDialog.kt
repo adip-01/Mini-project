@@ -1,31 +1,27 @@
-package com.adib0082.mobpro1.ui.screen
+package com.adib0082.miniprojek.ui.screen
 
 import android.content.res.Configuration
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.adib0082.mobpro1.R
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DisplayAlertDialog(
     onDismissRequest: () -> Unit,
     onConfirmation: () -> Unit
 ) {
     AlertDialog(
-        text = { Text(text = stringResource(id = R.string.pesan_hapus))},
+        text = { Text(text = "Apakah Anda yakin ingin menghapus data ini?")},
         confirmButton = {
             TextButton(onClick = { onConfirmation()}) {
-                Text(text = stringResource(id = R.string.tombol_hapus))
+                Text(text = "Hapus")
             }
         },
         dismissButton = {
             TextButton(onClick = { onDismissRequest()}) {
-                Text(text = stringResource(id = R.string.tombol_batal))
+                Text(text = "Batal")
             }
         },
         onDismissRequest = { onDismissRequest()}

@@ -1,4 +1,4 @@
-package com.adib0082.mobpro1.ui.screen
+package com.adib0082.miniprojek.ui.screen
 
 import android.content.res.Configuration
 import androidx.compose.foundation.BorderStroke
@@ -44,14 +44,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.adib0082.mobpro1.R
-import com.adib0082.mobpro1.model.Mahasiswa
-import com.adib0082.mobpro1.navigation.Screen
-import com.adib0082.mobpro1.util.SettingsDataStore
-import com.adib0082.mobpro1.util.ViewModelFactory
+import com.adib0082.miniprojek.R
+import com.adib0082.miniprojek.model.SensorKecepatan
+import com.adib0082.miniprojek.navigation.Screen
+import com.adib0082.miniprojek.util.SettingsDataStore
+import com.adib0082.miniprojek.util.ViewModelFactory
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,10 +83,7 @@ fun MainScreen(navController: NavHostController) {
                                 if (showList) R.drawable.baseline_view_list_24
                                 else R.drawable.baseline_grid_view_24
                             ),
-                            contentDescription = stringResource(
-                                if (showList) R.string.grid
-                                else R.string.list
-                            ),
+                            contentDescription = "Ganti Layout",
                             tint = MaterialTheme.colorScheme.primary
                         )
                     }
@@ -93,12 +93,12 @@ fun MainScreen(navController: NavHostController) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    navController.navigate(Screen.FromBaru.route)
+                    navController.navigate(Screen.FormBaru.route)
                 }
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = stringResource(id = R.string.tambah_mahasiswa),
+                    contentDescription = "Tambah Data",
                     tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
@@ -123,7 +123,7 @@ fun ScreenContent(showList: Boolean, modifier: Modifier = Modifier, navControlle
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = stringResource(id = R.string.list_kosong))
+            Text(text = "Daftar Kosong")
         }
     } else {
         if (showList) {
@@ -159,7 +159,7 @@ fun ScreenContent(showList: Boolean, modifier: Modifier = Modifier, navControlle
 }
 
 @Composable
-fun ListItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
+fun ListItem(data: SensorKecepatan, onClick: () -> Unit) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -168,23 +168,23 @@ fun ListItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = mahasiswa.nama,
+            text = "${data.nilai} m/s",
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.Bold
         )
 
         Text(
-            text = mahasiswa.nim,
+            text = "Jenis: ${data.jenis} | Lokasi: ${data.lokasi}",
             maxLines = 2,
             overflow = TextOverflow.Ellipsis
         )
-        Text(text = mahasiswa.kelas)
+        Text(text = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date(data.waktu)))
     }
 }
 
 @Composable
-fun GridItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
+fun GridItem(data: SensorKecepatan, onClick: () -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth().clickable { onClick() },
         colors = CardDefaults.cardColors(
@@ -197,21 +197,24 @@ fun GridItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = mahasiswa.nama,
+                text = "${data.nilai} m/s",
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = mahasiswa.nim,
-                maxLines = 4,
+                text = "Jenis: ${data.jenis}",
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis
             )
-            Text(text = mahasiswa.kelas)
+            Text(
+                text = "Lokasi: ${data.lokasi}",
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis
+            )
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, showBackground = true)

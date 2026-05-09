@@ -1,4 +1,4 @@
-package com.adib0082.mobpro1.util
+package com.adib0082.miniprojek.util
 
 import android.content.Context
 import androidx.datastore.core.DataStore
