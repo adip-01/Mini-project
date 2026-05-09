@@ -1,18 +1,21 @@
 package com.adib0082.miniprojek.ui.screen
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.DeleteForever
 import androidx.compose.material.icons.filled.Restore
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -20,8 +23,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -33,42 +36,67 @@ import com.adib0082.miniprojek.util.ViewModelFactory
 @Composable
 fun ScreenHapus(navController: NavHostController) {
     val context = LocalContext.current
-    val viewModel: MainViewModel = viewModel(factory = ViewModelFactory(context))
+    val factory = ViewModelFactory(context)
+    val viewModel: MainViewModel = viewModel(factory = factory)
     val deletedData by viewModel.deletedData.collectAsState()
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.title_recycle_bin)) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.back_desc),
-                            tint = Color.White
+                            contentDescription = stringResource(id = R.string.back_desc),
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
+                title = {
+                    Text(text = stringResource(id = R.string.title_recycle_bin))
+                },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color(0xFF2196F3),
-                    titleContentColor = Color.White
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
                 )
             )
         }
     ) { padding ->
         if (deletedData.isEmpty()) {
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                Text(stringResource(R.string.empty_recycle_bin))
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(text = stringResource(id = R.string.empty_recycle_bin))
             }
         } else {
             LazyColumn(modifier = Modifier.padding(padding)) {
                 items(deletedData) { data ->
                     ListItem(
-                        headlineContent = { Text(stringResource(R.string.unit_ms, data.nilai)) },
-                        supportingContent = { Text(data.lokasi) },
+                        headlineContent = {
+                            Text(text = stringResource(id = R.string.unit_ms, data.nilai))
+                        },
+                        supportingContent = {
+                            Text(text = data.lokasi)
+                        },
                         trailingContent = {
-                            IconButton(onClick = { viewModel.restore(data.id) }) {
-                                Icon(Icons.Default.Restore, stringResource(R.string.restore_desc), tint = Color(0xFF2196F3))
+                            Row {
+                                IconButton(onClick = { viewModel.restore(data.id) }) {
+                                    Icon(
+                                        imageVector = Icons.Default.Restore,
+                                        contentDescription = stringResource(id = R.string.restore_desc),
+                                        tint = MaterialTheme.colorScheme.primary
+                                    )
+                                }
+                                IconButton(onClick = { viewModel.deletePermanently(data.id) }) {
+                                    Icon(
+                                        imageVector = Icons.Default.DeleteForever,
+                                        contentDescription = stringResource(id = R.string.delete_desc),
+                                        tint = MaterialTheme.colorScheme.error
+                                    )
+                                }
                             }
                         }
                     )

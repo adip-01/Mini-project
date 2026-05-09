@@ -10,14 +10,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val dao: KecepatanDao) : ViewModel() {
-    // Hanya menampilkan data yang aktif (isDeleted = false)
     val data: StateFlow<List<SensorKecepatan>> = dao.getAllActiveData().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = emptyList()
     )
 
-    // Data untuk Recycle Bin
     val deletedData: StateFlow<List<SensorKecepatan>> = dao.getDeletedData().stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),

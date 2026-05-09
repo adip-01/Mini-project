@@ -20,11 +20,9 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
         composable(route = Screen.Home.route) {
             MainScreen(navController)
         }
-        // Tambahkan rute untuk form tambah data baru
         composable(route = Screen.FormBaru.route) {
             DetailScreen(navController)
         }
-
         composable(
             route = Screen.FormUbah.route,
             arguments = listOf(navArgument("id") { type = NavType.LongType })
@@ -32,8 +30,7 @@ fun SetupNavGraph(navController: NavHostController = rememberNavController()) {
             val id = backStackEntry.arguments?.getLong("id")
             DetailScreen(navController, id)
         }
-
-        composable("recycleBin") {
+        composable(Screen.RecycleBin.route) {
             ScreenHapus(navController)
         }
     }
