@@ -1,22 +1,17 @@
 package com.adib0082.miniprojek.database
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
-import com.adib0082.miniprojek.model.Mahasiswa
+import androidx.room.*
+import com.adib0082.miniprojek.model.KecepatanSensor
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface MahasiswaDao {
+interface KecepatanDao {
     @Insert
-    suspend fun insert(mahasiswa: Mahasiswa)
-    @Update
-    suspend fun update(mahasiswa: Mahasiswa)
-    @Query("SELECT * FROM mahasiswa ORDER BY nama DESC")
-    fun getMahasiswa(): Flow<List<Mahasiswa>>
-    @Query("SELECT * FROM mahasiswa WHERE id = :id")
-    suspend fun getMahasiswaById(id: Long): Mahasiswa?
-    @Query("DELETE FROM mahasiswa WHERE id = :id")
-    suspend fun delete(id: Long)
+    suspend fun insert(data: KecepatanSensor)
+
+    @Query("SELECT * FROM kecepatan_sensor ORDER BY waktu DESC")
+    fun getAllData(): Flow<List<KecepatanSensor>>
+
+    @Query("DELETE FROM kecepatan_sensor WHERE id = :id")
+    suspend fun deleteById(id: Long)
 }

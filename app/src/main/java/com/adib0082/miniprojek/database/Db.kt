@@ -1,29 +1,27 @@
-package com.adib0082.mobpro1.database
+package com.adib0082.miniprojek.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.adib0082.mobpro1.model.Mahasiswa
+import com.adib0082.miniprojek.model.KecepatanSensor
 
-@Database(entities = [Mahasiswa::class], version = 1, exportSchema = false)
-abstract class MahasiswaDb : RoomDatabase() {
-    abstract val dao: MahasiswaDao
+@Database(entities = [KecepatanSensor::class], version = 1, exportSchema = false)
+abstract class AppDb : RoomDatabase() {
+    abstract val dao: KecepatanDao
+
     companion object {
         @Volatile
-        private var INSTANCE: MahasiswaDb? = null
-        fun getInstance(context: Context): MahasiswaDb {
-            synchronized(this) {
-                var instance = INSTANCE
-                if (instance == null) {
-                    instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        MahasiswaDb::class.java,
-                        "mahasiswa.db"
-                    ).build()
-                    INSTANCE = instance
-                }
-                return instance
+        private var INSTANCE: AppDb? = null
+        fun getInstance(context: Context): AppDb {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    AppDb::class.java,
+                    "sensor_db"
+                ).build()
+                INSTANCE = instance
+                instance
             }
         }
     }
