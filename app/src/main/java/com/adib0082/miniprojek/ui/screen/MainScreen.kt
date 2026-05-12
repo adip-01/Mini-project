@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.DividerDefaults
@@ -34,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -66,8 +68,9 @@ fun MainScreen(navController: NavHostController) {
                     Text(text = stringResource(id = R.string.app_name))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = Color(0xFF2196F3),
+                    titleContentColor = Color.White,
+                    actionIconContentColor = Color.White
                 ),
                 actions = {
                     IconButton(onClick = {
@@ -80,8 +83,15 @@ fun MainScreen(navController: NavHostController) {
                                 if (showList) R.drawable.baseline_view_list_24
                                 else R.drawable.baseline_grid_view_24
                             ),
-                            contentDescription = stringResource(id = R.string.change_layout_desc),
-                            tint = MaterialTheme.colorScheme.primary
+                            contentDescription = stringResource(id = R.string.change_layout_desc)
+                        )
+                    }
+                    IconButton(onClick = {
+                        navController.navigate(Screen.RecycleBin.route)
+                    }) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = stringResource(id = R.string.recycle_bin_desc)
                         )
                     }
                 }
@@ -91,12 +101,13 @@ fun MainScreen(navController: NavHostController) {
             FloatingActionButton(
                 onClick = {
                     navController.navigate(Screen.FormBaru.route)
-                }
+                },
+                containerColor = Color(0xFF2196F3),
+                contentColor = Color.White
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = stringResource(id = R.string.add_data_desc),
-                    tint = MaterialTheme.colorScheme.onPrimary
+                    contentDescription = stringResource(id = R.string.add_data_desc)
                 )
             }
         }

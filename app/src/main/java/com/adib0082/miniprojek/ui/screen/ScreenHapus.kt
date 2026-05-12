@@ -25,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -48,7 +49,7 @@ fun ScreenHapus(navController: NavHostController) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.back_desc),
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = Color.White
                         )
                     }
                 },
@@ -56,8 +57,9 @@ fun ScreenHapus(navController: NavHostController) {
                     Text(text = stringResource(id = R.string.title_recycle_bin))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = Color(0xFF2196F3),
+                    titleContentColor = Color.White,
+                    actionIconContentColor = Color.White
                 )
             )
         }
@@ -87,7 +89,7 @@ fun ScreenHapus(navController: NavHostController) {
                                     Icon(
                                         imageVector = Icons.Default.Restore,
                                         contentDescription = stringResource(id = R.string.restore_desc),
-                                        tint = MaterialTheme.colorScheme.primary
+                                        tint = Color(0xFF2196F3)
                                     )
                                 }
                                 IconButton(onClick = { viewModel.deletePermanently(data.id) }) {

@@ -2,14 +2,11 @@ package com.adib0082.miniprojek.ui.screen
 
 import android.content.res.Configuration
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -18,12 +15,12 @@ import androidx.compose.material.icons.outlined.Check
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -34,11 +31,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -78,19 +74,16 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(id = R.string.back_desc),
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = Color.White
                         )
                     }
                 },
                 title = {
-                    if (id == null)
-                        Text(text = stringResource(id = R.string.title_add_sensor))
-                    else
-                        Text(text = stringResource(id = R.string.title_edit_sensor))
+                    Text(text = stringResource(id = if (id == null) R.string.title_add_sensor else R.string.title_edit_sensor))
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = Color(0xFF2196F3),
+                    titleContentColor = Color.White,
                 ),
                 actions = {
                     IconButton(onClick = {
@@ -99,7 +92,7 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                             return@IconButton
                         }
 
-                        val nilaiDouble = nilai.toDoubleOrNull() ?: 0.0
+                        val nilaiDouble = nilai.replace(',', '.').toDoubleOrNull() ?: 0.0
                         if (id == null) {
                             viewModel.insert(nilaiDouble, jenis, lokasi)
                         } else {
@@ -110,7 +103,7 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
                         Icon(
                             imageVector = Icons.Outlined.Check,
                             contentDescription = stringResource(id = R.string.save_desc),
-                            tint = MaterialTheme.colorScheme.primary
+                            tint = Color.White
                         )
                     }
                     if (id != null) {
@@ -145,6 +138,7 @@ fun DetailScreen(navController: NavHostController, id: Long? = null) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormSensor(
     nilai: String, onNilaiChange: (String) -> Unit,
@@ -152,7 +146,8 @@ fun FormSensor(
     jenis: String, onJenisChange: (String) -> Unit,
     modifier: Modifier
 ) {
-    val radioOptions = listOf("Wind", "Water")
+    val options = listOf("Wind", "Water")
+    var expanded by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp),
@@ -164,7 +159,7 @@ fun FormSensor(
             label = { Text(text = stringResource(id = R.string.label_speed)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number,
+                keyboardType = KeyboardType.Decimal,
                 imeAction = ImeAction.Next
             ),
             modifier = Modifier.fillMaxWidth()
@@ -180,35 +175,35 @@ fun FormSensor(
             modifier = Modifier.fillMaxWidth()
         )
 
-        OutlinedCard(
-            modifier = Modifier.fillMaxWidth(),
-            border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline)
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded },
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
+            OutlinedTextField(
+                value = if (jenis == "Wind") stringResource(R.string.sensor_type_wind) else stringResource(R.string.sensor_type_water),
+                onValueChange = {},
+                readOnly = true,
+                label = { Text(text = stringResource(id = R.string.label_sensor_type)) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(),
+                modifier = Modifier.menuAnchor().fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false }
             ) {
-                radioOptions.forEach { text ->
-                    Row(
-                        Modifier
-                            .fillMaxWidth()
-                            .selectable(
-                                selected = (text == jenis),
-                                onClick = { onJenisChange(text) },
-                                role = Role.RadioButton
-                            )
-                            .padding(vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ){
-                        RadioButton(
-                            selected = (text == jenis),
-                            onClick = null
-                        )
-                        Text(
-                            text = if (text == "Wind") stringResource(R.string.sensor_type_wind) else stringResource(R.string.sensor_type_water),
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(start = 16.dp)
-                        )
-                    }
+                options.forEach { selectionOption ->
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = if (selectionOption == "Wind") stringResource(R.string.sensor_type_wind) else stringResource(R.string.sensor_type_water))
+                        },
+                        onClick = {
+                            onJenisChange(selectionOption)
+                            expanded = false
+                        },
+                        contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding
+                    )
                 }
             }
         }
@@ -222,7 +217,7 @@ fun DeleteAction(delete: () -> Unit) {
         Icon(
             imageVector = Icons.Filled.MoreVert,
             contentDescription = stringResource(id = R.string.more_desc),
-            tint = MaterialTheme.colorScheme.primary
+            tint = Color.White
         )
         DropdownMenu(
             expanded = expanded,
