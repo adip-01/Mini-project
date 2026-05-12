@@ -174,17 +174,17 @@ fun ListItem(data: SensorKecepatan, onClick: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = stringResource(R.string.unit_ms, data.nilai),
-            maxLines = 1,
+            text = "Lokasi: ${data.lokasi}",
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.Bold
         )
+        Text(text = "Jenis Kecepatan: ${if (data.jenis == "Wind") stringResource(R.string.sensor_type_wind) else stringResource(R.string.sensor_type_water)}")
         Text(
-            text = data.lokasi,
-            maxLines = 2,
+            text = "Kecepatan: ${stringResource(R.string.unit_ms, data.nilai)}",
+            maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        Text(text = if (data.jenis == "Wind") stringResource(R.string.sensor_type_wind) else stringResource(R.string.sensor_type_water))
     }
 }
 
@@ -202,17 +202,17 @@ fun GridItem(data: SensorKecepatan, onClick: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             Text(
-                text = stringResource(R.string.unit_ms, data.nilai),
+                text = "Lokasi: ${data.lokasi}",
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold
             )
+            Text(text = "Jenis Kecepatan: ${if (data.jenis == "Wind") stringResource(R.string.sensor_type_wind) else stringResource(R.string.sensor_type_water)}")
             Text(
-                text = data.lokasi,
-                maxLines = 4,
+                text = "Kecepatan: ${stringResource(R.string.unit_ms, data.nilai)}",
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-            Text(text = if (data.jenis == "Wind") stringResource(R.string.sensor_type_wind) else stringResource(R.string.sensor_type_water))
         }
     }
 }
